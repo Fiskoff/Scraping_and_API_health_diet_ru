@@ -8,6 +8,7 @@ class Product(BaseModel):
     __tablename__ = "products"
 
     product_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, index=True)
+    category: Mapped[str] = mapped_column(String, nullable=False)
     title: Mapped[str] = mapped_column(String, nullable=False)
     calories: Mapped[int] = mapped_column(Integer, default=0)
     protein: Mapped[float] = mapped_column(Float, default=0.0)

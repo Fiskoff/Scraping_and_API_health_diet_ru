@@ -41,7 +41,7 @@ def get_csv_file_with_all_products():
     with open("core/scraping/all_products.csv", "w", encoding="utf-8", newline='') as file:
         writer = csv.writer(file)
 
-        writer.writerow(["Продукт", "Калории", "Белки", "Жиры", "Углеводы"])
+        writer.writerow(["Категория", "Продукт", "Калории", "Белки", "Жиры", "Углеводы"])
 
         for category_name, category_href in all_category.items():
             req = requests.get(category_href, headers=settings.scraping.headers)
@@ -58,6 +58,7 @@ def get_csv_file_with_all_products():
             for item in products_data:
                 product_tds = item.find_all("td")
 
+                category = category_name
                 title = product_tds[0].text.strip()
                 calorie = product_tds[1].text.strip()
                 protein = product_tds[2].text.strip()
@@ -65,6 +66,7 @@ def get_csv_file_with_all_products():
                 carbohydrates = product_tds[4].text.strip()
 
                 writer.writerow([
+                    category,
                     title,
                     calorie,
                     protein,
@@ -96,12 +98,13 @@ def get_date_from_csv() -> list[list]:
         next(csv_reader)  # Заголовки
 
         for row in csv_reader:
-            title = str(row[0])
-            calories = int(extract_number(row[1]))
-            protein = float(extract_number(row[2]))
-            fats = float(extract_number(row[3]))
-            carbs = float(extract_number(row[4]))
+            category = str(row[0])
+            title = str(row[1])
+            calories = int(extract_number(row[2]))
+            protein = float(extract_number(row[3]))
+            fats = float(extract_number(row[4]))
+            carbs = float(extract_number(row[5]))
 
-            date_from_csv.append([title, calories, protein, fats, carbs])
+            date_from_csv.append([category, title, calories, protein, fats, carbs])
 
         return date_from_csv

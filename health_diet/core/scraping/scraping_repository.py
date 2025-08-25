@@ -9,11 +9,12 @@ async def fill_table_product():
     async with db_helper.session_factory() as session:
         for date in date_list:
             product = Product(
-                title=date[0],
-                calories=date[1],
-                protein=date[2],
-                fats=date[3],
-                carbs=date[4],
+                category=date[0],
+                title=date[1],
+                calories=date[2],
+                protein=date[3],
+                fats=date[4],
+                carbs=date[5],
             )
             session.add(product)
 
