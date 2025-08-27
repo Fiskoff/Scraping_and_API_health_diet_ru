@@ -5,7 +5,10 @@ import re
 
 import requests
 from bs4 import BeautifulSoup
+from sqlalchemy import select
 
+from core.db_halper import db_helper
+from core.models.categories_model import Category
 from core.settings import settings
 
 
@@ -90,7 +93,7 @@ def extract_number(text):
     return 0.0
 
 
-def get_date_from_csv() -> list[list]:
+async def get_date_from_csv() -> list[list]:
     with open("core/scraping/all_products.csv", 'r', encoding='utf-8') as file:
         csv_reader = csv.reader(file)
 
@@ -98,13 +101,26 @@ def get_date_from_csv() -> list[list]:
         next(csv_reader)  # Заголовки
 
         for row in csv_reader:
-            category = str(row[0])
             title = str(row[1])
             calories = int(extract_number(row[2]))
             protein = float(extract_number(row[3]))
             fats = float(extract_number(row[4]))
             carbs = float(extract_number(row[5]))
+            category_id = int(await get_category_id(str(row[0])))
 
-            date_from_csv.append([category, title, calories, protein, fats, carbs])
+            date_from_csv.append([title, calories, protein, fats, carbs, category_id])
 
         return date_from_csv
+
+
+def get_all_categories() -> list:
+    with open("core/scraping/all_categories_dict.json", "r",  encoding='utf-8') as file:
+        data = json.load(file)
+
+    return list(data.keys())
+
+
+async def get_category_id(category_title: str) -> int:
+    async with db_helper.session_factory() as session:
+        result = await session.execute(select(Category.id).where(Category.title == category_title))
+        return result.scalar()

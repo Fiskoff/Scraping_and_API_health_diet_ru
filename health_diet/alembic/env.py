@@ -10,6 +10,7 @@ from alembic import context
 from core.settings import settings
 from core.models.base_model import BaseModel
 from core.models.product_model import Product
+from core.models.categories_model import Category
 
 
 config = context.config
